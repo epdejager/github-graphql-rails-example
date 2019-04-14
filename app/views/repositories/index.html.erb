@@ -15,19 +15,11 @@
   #
   # Its exported as "Views::Repositories::Index::Viewer". The module path to
   # the tempate then the name of the fragment.
-  fragment Viewer on User {
+  fragment Course on Course {
     # Initially, fetch the first 10 repositories. We'll show a "load more"
     # button to demostrate GraphQL connection cursors.
-    repositories(first: 10) {
-      # The only data we're using directly in this template is the total number
-      # of repositories. Also note that its camelcase here.
-      totalCount
-
-      # Include data dependencies of app/views/repositories/_repositories.html.erb
-      # All renders in this template will map to a fragment spread to
-      # statically define the view composition relationship.
-      ...Views::Repositories::Repositories::RepositoryConnection
-    }
+      title
+      description
   }
 %>
 <%#
@@ -44,21 +36,8 @@
      `viewer.repositories` is a full set of data, but only `total_count` is
      exposed to this template since thats all we explicitly defined.
 %>
-<% viewer = Views::Repositories::Index::Viewer.new(viewer) %>
-
-<div class="repositories">
-  <ul class="list-group">
-    <li class="list-group-item">
-      <strong>Your repositories</strong>
-      <%# NOTE: total_count is snake case here %>
-      <span class="badge"><%= viewer.repositories.total_count %></span>
-    </li>
-
-    <%#
-      render repositories subview passing along viewer.repositories
-      See that Views::Repositories::Repositories::RepositoryConnection is
-      declared in our static fragment.
-    %>
-    <%= render "repositories/repositories", repositories: viewer.repositories %>
-  </ul>
-</div>
+<% courses.each do |course| %>
+  <% course = Views::Repositories::Index::Course.new(course) %>
+    <%= course.title %>
+    <%= course.description %>
+<% end %>
